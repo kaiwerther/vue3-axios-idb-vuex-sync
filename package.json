@@ -1,6 +1,10 @@
 {
   "name": "vue3-axios-idb-store-sync",
   "version": "1.0.9",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "repository": "git://github.com/kaiwerther/vue3-axios-idb-store-sync.git",
   "description": "Vue3 vuex module that creates a fully fledged CRUD module and caches data in idb for faster access",
   "main": "index.js",
   "scripts": {
