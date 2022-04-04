@@ -1,0 +1,1 @@
+# vue3-axios-idb-store-sync
