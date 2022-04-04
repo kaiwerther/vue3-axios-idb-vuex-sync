@@ -176,34 +176,12 @@ These are currently not configurable for consistency reasons. If you have a lega
 | :------------ |:---------------| :----- | :----- |
 | endpoint      | used to identify the backend URLs | - | false |
 | dbVersion      | Version of the IDB - this should be increased on breaking entity changes | 1 | true |
-| initDataItemCallback      | This callback will be called after initialization for every NEW entity.
-This callback is used to transform entites and to do expensive precalculations.
-For example: Date formating and status calculations
-There is no need to make a deep copy of the entity. Just add / change new properties and return the entity.
-Parameters:
-1. ONE new entity the backend sends | - | true |
-| dataChangedCallback      | this callback will be called whenever an item was saved
-Parameters:
-1. store
-2. saved entity the backend sends | - | true |
-| successCallback      | will be called whenever an action (loading, delete, create, update) was successfull. This is normaly used to show success messages.
-Parameters:
-1. task name (one of: loading, delete, create, update)
-2. store | - | true |
-| startLoadingCallback      | This callback is used to show a loading overlay. It should return a method to hide the overlay.
-Example:
-  ```js
-  startLoadingCallback: async (taskName, store) => {
-    const overlay = loadingOverlay.show({ title: taskName });
-    return () => {
-      overlay.hide();
-    };
-  },
-   ```
- | - | true |
+| initDataItemCallback      | This callback will be called after initialization for every NEW entity.<br />This callback is used to transform entites and to do expensive precalculations.<br />For example: Date formating and status calculations<br />There is no need to make a deep copy of the entity. Just add / change new properties and return the entity.<br />Parameters:<br />1. ONE new entity the backend sends | - | true |
+| dataChangedCallback      | this callback will be called whenever an item was saved<br />Parameters:<br />1. store<br />2. saved entity the backend sends | - | true |
+| successCallback      | will be called whenever an action (loading, delete, create, update) was successfull. This is normaly used to show success messages.<br />Parameters:<br />1. task name (one of: loading, delete, create, update)<br />2. store | - | true |
+| startLoadingCallback      | This callback is used to show a loading overlay. It should return a method to hide the overlay.| - | true |
 | namespaced | If the module should be namespaced or not | false | true |
-| indexes | list of indexes that should be build up. Array of objects with attributes 'column' and 'unique'.
-There is always an unique index with the idColumn build up. No need to add it here. | [] | true |
+| indexes | list of indexes that should be build up. Array of objects with attributes 'column' and 'unique'.<br />There is always an unique index with the idColumn build up. No need to add it here. | [] | true |
 | idColumn | name of the column to identify entities | 'id' | true |
 | autoRefresh | turns the auto refresh on or off | false | true |
 | autoRefreshInverallMs | interval in ms whenever new entities should be automatically fetched | 10000 | true |
@@ -212,14 +190,7 @@ There is always an unique index with the idColumn build up. No need to add it he
 | :------------ | :--------------- | :--------------- |
 | all | - | returns all entities |
 | byId | itemId | returns an entity based on the value of the idColumn |
-| byIndex | {index, values}
-index: index name
-values: array of values to look up in the indexes
-Example:
-  ```js
-    store.getters['moduleName/byIndex']({index: 'quarter', ['q4_2022', 'q3_2022']});
-  ```
-  | returns entities based on values in indexes. See Option 'indexes' |
+| byIndex | {index, values}<br />index: index name<br />values: array of values to look up in the indexes| returns entities based on values in indexes. See Option 'indexes' |
 | lastCacheUpdate | - | timestamp on the last time the cache was updated |
 
 #### Actions
