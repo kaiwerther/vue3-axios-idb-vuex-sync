@@ -8,7 +8,7 @@
   "description": "Vue3 vuex module that creates a fully fledged CRUD module and caches data in idb for faster access",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "keywords": [
     "vue3",
