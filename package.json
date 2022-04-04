@@ -1,0 +1,33 @@
+{
+  "name": "vue3-axios-idb-store-sync",
+  "version": "1.0.9",
+  "description": "Vue3 vuex module that creates a fully fledged CRUD module and caches data in idb for faster access",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vue3",
+    "vuex",
+    "idb"
+  ],
+  "author": "kai werther",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "idb": "^6.1.3"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "devDependencies": {
+    "eslint": "^7.28.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.23.4"
+  },
+  "peerDependencies": {
+    "vue": ">= 3.3.0",
+    "vuex": ">= 4.0.0"
+  }
+}
