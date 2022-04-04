@@ -22,7 +22,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -96,23 +95,30 @@ Features:
    npm install vue3-axios-idb-vuex-sync -save
    ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+### Installation Axios
+Axios is needed for this project and needs to be correctly configured. Here is the recommended configuration:
 
-### usage
-
-We expect your Vue3 project uses axios.
-
-It is recommended to use environment variables.
+install package
+   ```sh
+   npm install axios -save
+   ```
 
 in main.js
-```js
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
-```
+  ```js
+  axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+  ```
 
 in .env.development (+ .env.production)
-```js
-VITE_BACKEND_URL=http://localhost:8080/
-```
+  ```js
+  VITE_BACKEND_URL=http://localhost:8080/
+  ```
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+### Usage
+endpointName: in these examples can be replaced to anything
+moduleName: for consistency normaly the same as endpoint name. This is the name of the Vuex store module
 
 in store.js
    ```js
@@ -120,8 +126,8 @@ in store.js
    ...
    export default createStore({
     modules: {
-      moduleName: createBackendIdbVuexDataSync(
-          { endpoint: endpointName },
+      'moduleName': createBackendIdbVuexDataSync(
+          { endpoint: 'endpointName' },
         )
       },
    });
@@ -135,7 +141,7 @@ in any component
    const allEntites = computed(() => store.getters['moduleName/all']);
    ...
    onMounted(() => {
-    store.dispatch('tags/initialize');
+    store.dispatch('moduleName/initialize');
    });
    ...
    function deleteItem(id) {
@@ -146,52 +152,83 @@ in any component
 ### backend API needed
 This plugin expects the following endpoints under your backend URL:
 
-1. POST /endpoint/
+1. POST /endpointName/
 Creating an new entity
 Expects entity as JSON in body
 Returns saved entity as JSON
-2. GET /endpoint/
+2. GET /endpointName/
 Get a list of ALL entities - as JSON list
-3. GET /endpoint/?lastCacheUpdate={timestampInMs}
+3. GET /endpointName/?lastCacheUpdate={timestampInMs}
 Get a list of all entities that have been changed since {timestampInMs} - as JSON list
-4. PUT /endpoint/{itemId}
+4. PUT /endpointName/{itemId}
 Saves an existing entity
 Expects entity as JSON in body
 Returns saved entity as JSON
-5. DELETE /endpoint/{itemId}
+5. DELETE /endpointName/{itemId}
 Deletes an entity
 Expects no body and returns nothing
 
-TODO: make this configurable
+These are currently not configurable for consistency reasons. If you have a legacy API and need other endpoints feel free to make a pull request :)
 
 ### frontend API
-#### Options
-##### endpoint
-endpoint where client looks for when calling the backend
-##### afterUpdateCallback
-this callback will be called whenever an item was saved
-Parameters:
-1. store
-2. saved entity the backend sends
-##### initDataCallback
-This callback will be called after initialization for every NEW entity.
+#### Options for backendDataSync
+| Attribute  | Description | Default | Optional |
+| :------------ |:---------------| :----- | :----- |
+| endpoint      | used to identify the backend URLs | - | false |
+| dbVersion      | Version of the IDB - this should be increased on breaking entity changes | 1 | true |
+| initDataItemCallback      | This callback will be called after initialization for every NEW entity.
 This callback is used to transform entites and to do expensive precalculations.
 For example: Date formating and status calculations
 There is no need to make a deep copy of the entity. Just add / change new properties and return the entity.
 Parameters:
-1. ONE new entity the backend sends
+1. ONE new entity the backend sends | - | true |
+| dataChangedCallback      | this callback will be called whenever an item was saved
+Parameters:
+1. store
+2. saved entity the backend sends | - | true |
+| successCallback      | will be called whenever an action (loading, delete, create, update) was successfull. This is normaly used to show success messages.
+Parameters:
+1. task name (one of: loading, delete, create, update)
+2. store | - | true |
+| startLoadingCallback      | This callback is used to show a loading overlay. It should return a method to hide the overlay.
+Example:
+  ```js
+  startLoadingCallback: async (taskName, store) => {
+    const overlay = loadingOverlay.show({ title: taskName });
+    return () => {
+      overlay.hide();
+    };
+  },
+   ```
+ | - | true |
+| namespaced | If the module should be namespaced or not | false | true |
+| indexes | list of indexes that should be build up. Array of objects with attributes 'column' and 'unique'.
+There is always an unique index with the idColumn build up. No need to add it here. | [] | true |
+| idColumn | name of the column to identify entities | 'id' | true |
+| autoRefresh | turns the auto refresh on or off | false | true |
+| autoRefreshInverallMs | interval in ms whenever new entities should be automatically fetched | 10000 | true |
 #### Getters
-##### moduleName/all
-returns an array of all entites
-##### moduleName/byId
-returns one entity by its id.
-Parameters:
-Object with id property
+| Name  | Parameters | Description | 
+| :------------ | :--------------- | :--------------- |
+| all | - | returns all entities |
+| byId | itemId | returns an entity based on the value of the idColumn |
+| byIndex | {index, values}
+index: index name
+values: array of values to look up in the indexes
+Example:
+  ```js
+    store.getters['moduleName/byIndex']({index: 'quarter', ['q4_2022', 'q3_2022']});
+  ```
+  | returns entities based on values in indexes. See Option 'indexes' |
+| lastCacheUpdate | - | timestamp on the last time the cache was updated |
+
 #### Actions
-##### moduleName/initialize
-Needs to be called. Can be called multiple times. Will only load once.
+##### moduleName/loadData
+Needs to be called to initialize the module on application startup. All parameters are optional
 Parameters:
-none
+showSuccess: default true. Determinates if the successCallback should be called.
+initData: Array of Entities that (can be) loaded from another source. This should normaly not be used. Used in case we bundle initialization requests to the backend into one init call.
+initCacheData: Same use case as above but contains data from idb
 ##### moduleName/update
 Updates one entity by its id. Also removes it from IDB
 Parameters:
@@ -205,15 +242,10 @@ Deletes one entity by its id. Also removes it from IDB
 Parameters:
 Object with id property
 
-
-
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 ## Roadmap
-
-- Add more customizability
-- Add live sync
 
 See the [open issues](https://github.com/kaiwerther/vue3-axios-idb-vuex-sync/issues) for a full list of proposed features (and known issues).
 
@@ -251,7 +283,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-kaiwerther - kaiwerther@gmail.com
+kaiwerther - kai.werther@infineon.com / kaiwerther@gmail.com
 
 Project Link: [https://github.com/kaiwerther/vue3-axios-idb-vuex-sync](https://github.com/kaiwerther/vue3-axios-idb-vuex-sync)
 
