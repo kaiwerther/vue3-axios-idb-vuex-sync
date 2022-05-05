@@ -1,6 +1,6 @@
 {
   "name": "vue3-axios-idb-vuex-sync",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/ "
   },
