@@ -13,6 +13,7 @@ export default ({
   idColumn = 'id',
   autoRefresh = false,
   autoRefreshIntervallMs = 10000,
+  writeChunkSize = 200,
 }) => {
   const lastCacheUpdateKey = `${endpoint}/lastUpdateV${dbVersion}`;
   const lastCacheUpdate = () => JSON.parse(localStorage.getItem(lastCacheUpdateKey));
@@ -237,9 +238,8 @@ export default ({
         const db = await getIdb();
         // new items in 10er arrays aufteilen
         // je 10er array ein timeout starten
-        const chunkSize = 10;
         const saveElements = async (startIndex) => {
-          const endIndex = startIndex + chunkSize;
+          const endIndex = startIndex + writeChunkSize;
           const tx = db.transaction(endpoint, 'readwrite');
 
           const itemsToAdd = newItems.slice(startIndex, endIndex);
