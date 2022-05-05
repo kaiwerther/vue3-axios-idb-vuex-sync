@@ -109,7 +109,7 @@ export default ({
         } else {
           if (store.itemsByIndex.get(index.column).has(oldItem[index.column])) {
             const oldIndexArray = store.itemsByIndex.get(index.column).get(oldItem[index.column]);
-            oldIndexArray?.splice(store.items.findIndex((v) => v[idColumn] === oldItem.id), 1);
+            oldIndexArray.splice(oldIndexArray.findIndex((v) => v[idColumn] === oldItem[idColumn]), 1);
           }
 
           if (!store.itemsByIndex.get(index.column).has(newItem[index.column])) {
