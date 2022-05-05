@@ -336,7 +336,6 @@ export default ({
           (await Promise.resolve(stopLoading))();
         }
         doSuccessCallback('Update', store);
-        store.dispatch('toasts/add', { title: `Save ${endpoint}`, text: `Saved ${endpoint} successfully`, cssClass: 'success' }, { root: true });
         return savedItem;
       },
       delete: async (store, item) => {
