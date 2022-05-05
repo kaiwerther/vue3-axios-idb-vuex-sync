@@ -107,9 +107,15 @@ export default ({
           store.itemsByIndex.get(index.column).delete(oldItem[index.column]);
           store.itemsByIndex.get(index.column).set(oldItem[index.column], oldItem);
         } else {
-          const oldIndexArray = store.itemsByIndex.get(index.column).get(oldItem[index.column]);
-          oldIndexArray.splice(store.items.findIndex((v) => v[idColumn] === oldItem.id), 1);
+          if (store.itemsByIndex.get(index.column).has(oldItem[index.column])) {
+            const oldIndexArray = store.itemsByIndex.get(index.column).get(oldItem[index.column]);
+            oldIndexArray?.splice(store.items.findIndex((v) => v[idColumn] === oldItem.id), 1);
+          }
 
+          if (!store.itemsByIndex.get(index.column).has(newItem[index.column])) {
+            store.itemsByIndex.get(index.column).set(newItem[index.column], []);
+          }
+          
           const newIndexArray = store.itemsByIndex.get(index.column).get(newItem[index.column]);
           newIndexArray.push(newItem);
         }
