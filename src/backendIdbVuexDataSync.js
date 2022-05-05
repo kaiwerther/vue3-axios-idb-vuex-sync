@@ -102,7 +102,7 @@ export default ({
   const updateItemIndexes = (store, oldItem, newItem) => {
     indexes.forEach((index) => {
       // eslint-disable-next-line no-prototype-builtins
-      if (oldItem[index] !== newItem[index]) {
+      if (oldItem[index.column] !== newItem[index.column]) {
         if (index.unique) {
           store.itemsByIndex.get(index.column).delete(oldItem[index.column]);
           store.itemsByIndex.get(index.column).set(oldItem[index.column], oldItem);
