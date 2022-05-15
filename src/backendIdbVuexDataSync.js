@@ -311,7 +311,12 @@ export default ({
         }
 
         const newItem = (await axios.post(endpoint, item)).data;
-        await store.commit('add', newItem);
+
+        if (initDataItemCallback) {
+          await store.commit('add', initDataItemCallback(newItem));
+        } else {
+          await store.commit('add', newItem);
+        }        ;
 
         if (stopLoading) {
           (await Promise.resolve(stopLoading))();
@@ -327,7 +332,12 @@ export default ({
         const saveResponse = (await axios.put(`${endpoint}/${item[idColumn]}`, item));
         const savedItem = saveResponse.data;
 
-        await store.commit('update', savedItem);
+        if (initDataItemCallback) {
+          await store.commit('update', initDataItemCallback(savedItem));
+        } else {
+          await store.commit('update', savedItem);
+        }        ;
+
         if (dataChangedCallback) {
           dataChangedCallback(store, [savedItem]);
         }
