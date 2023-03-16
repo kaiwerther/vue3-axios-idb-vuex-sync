@@ -115,7 +115,7 @@ export default ({
           if (!store.itemsByIndex.get(index.column).has(newItem[index.column])) {
             store.itemsByIndex.get(index.column).set(newItem[index.column], []);
           }
-          
+
           const newIndexArray = store.itemsByIndex.get(index.column).get(newItem[index.column]);
           newIndexArray.push(newItem);
         }
@@ -220,13 +220,17 @@ export default ({
         // update items & itemsById
         store.items.splice(store.items.findIndex((v) => v[idColumn] === id), 1);
       },
-      update(store, updatedFields) {
+      update: async (store, updatedFields) => {
         const id = updatedFields[idColumn];
         const item = store.itemsByIndex.get(idColumn).get(id);
 
         updateItemIndexes(store, item, updatedFields);
 
         Object.keys(updatedFields).forEach((field) => { item[field] = updatedFields[field]; });
+
+        if (dataChangedCallback) {
+          dataChangedCallback(store, [updatedFields]);
+        }
       },
       add(store, item) {
         store.items.unshift(item);
@@ -240,7 +244,7 @@ export default ({
       },
       async persistInBrowser(store, { newItems, startFetchingTime }) {
         // save in browser cache
-      // this is an asynchronous operation running after the application is up and running
+        // this is an asynchronous operation running after the application is up and running
         const db = await getIdb();
         // new items in 10er arrays aufteilen
         // je 10er array ein timeout starten
@@ -316,7 +320,7 @@ export default ({
           await store.commit('add', initDataItemCallback(newItem));
         } else {
           await store.commit('add', newItem);
-        }        ;
+        };
 
         if (stopLoading) {
           (await Promise.resolve(stopLoading))();
@@ -336,11 +340,11 @@ export default ({
           await store.commit('update', initDataItemCallback(savedItem));
         } else {
           await store.commit('update', savedItem);
-        }        ;
+        };
 
-        if (dataChangedCallback) {
-          dataChangedCallback(store, [savedItem]);
-        }
+        // if (dataChangedCallback) {
+        //   dataChangedCallback(store, [savedItem]);
+        // }
 
         if (stopLoading) {
           (await Promise.resolve(stopLoading))();
