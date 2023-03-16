@@ -342,9 +342,9 @@ export default ({
           await store.commit('update', savedItem);
         };
 
-        if (dataChangedCallback) {
-          dataChangedCallback(store, [savedItem]);
-        }
+        // if (dataChangedCallback) {
+        //   dataChangedCallback(store, [savedItem]);
+        // }
 
         if (stopLoading) {
           (await Promise.resolve(stopLoading))();
